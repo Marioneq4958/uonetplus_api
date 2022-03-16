@@ -1,6 +1,6 @@
 # Uonetplus API
 
-Unofficial Vulcan Uczniowie Optivium Net Plus API written with [FastAPI](https://fastapi.tiangolo.com/).
+Unofficial Vulcan Uczniowie Optivum Net Plus API written with [FastAPI](https://fastapi.tiangolo.com/).
 [Endpoint wiki](https://github.com/Marioneq4958/uonetplus_api/wiki/Logowanie)
 
 ## Installation
