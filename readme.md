@@ -11,5 +11,5 @@ pip install -r requirements.txt
 ## Start the server
 ```sh
 cd app
-python -m main.py
+python main.py
 ```
