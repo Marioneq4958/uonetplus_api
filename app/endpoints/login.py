@@ -113,7 +113,14 @@ def get_students(symbol: str, host: str, ssl: bool, cers, session):
                 schoolid=id,
             )
             page = session.get(url)
+<<<<<<< HEAD
             name = get_script_param(page.text, "organizationName")
+=======
+            school_name = get_script_param(page.text, "organizationName")
+            anti_forgery_token = get_script_param(page.text, "antiForgeryToken")
+            app_guid = get_script_param(page.text, "appGuid")
+            version = get_script_param(page.text, "version")
+>>>>>>> feature/add-mobile-access
             url = build_url(
                 subd="uonetplus-uczen",
                 path=paths.UCZEN.UCZENDZIENNIK_GET,
@@ -125,6 +132,17 @@ def get_students(symbol: str, host: str, ssl: bool, cers, session):
             students_response = session.post(url)
             for student in students_response.json()["data"]:
                 semesters = []
+<<<<<<< HEAD
+=======
+                headers = {
+                    "Accept": "*/*",
+                    "Accept-Encoding": "gzip, deflate, br",
+                    "Connection": "keep-alive",
+                    "X-V-AppVersion": version,
+                    "X-V-AppGuid": app_guid,
+                    "X-V-RequestVerificationToken": anti_forgery_token
+                }
+>>>>>>> feature/add-mobile-access
                 for semester in student["Okresy"]:
                     semester = models.Semester(
                         number=semester["NumerOkresu"],
@@ -155,16 +173,32 @@ def get_students(symbol: str, host: str, ssl: bool, cers, session):
                     full_name=student["UczenPelnaNazwa"],
                     school_id=id,
                     school_symbol=symbol,
+<<<<<<< HEAD
                     school_name=name,
+=======
+                    school_name=school_name,
+>>>>>>> feature/add-mobile-access
                     cookies={
                         "idBiezacyDziennik": str(student["IdDziennik"]),
                         "idBiezacyUczen": str(student["IdUczen"]),
                         "idBiezacyDziennikPrzedszkole": str(student["IdPrzedszkoleDziennik"]),
                         "biezacyRokSzkolny": str(student["DziennikRokSzkolny"])
                     },
+<<<<<<< HEAD
                     semesters=semesters
                 )
                 students.append(student)
+=======
+                    headers=headers,
+                    semesters=semesters
+                )
+                students.append(student)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Symbol is incorrect'
+        )
+>>>>>>> feature/add-mobile-access
     return students
 
 def get_script_param(text: str, param: str, default: str = None) -> str:

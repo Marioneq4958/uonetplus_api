@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+<<<<<<< HEAD
 from datetime import datetime
 
 class NotesAndAchievements(BaseModel):
@@ -8,6 +9,15 @@ class NotesAndAchievements(BaseModel):
 
 class Note(BaseModel):
     date: datetime
+=======
+
+class NotesAndAchievements(BaseModel):
+    notes: list
+    achievements: list
+
+class Note(BaseModel):
+    date: str
+>>>>>>> feature/add-mobile-access
     teacher: str
     category: str
     content: str
