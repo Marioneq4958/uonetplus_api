@@ -3,17 +3,10 @@ from fastapi.security import APIKeyCookie
 from starlette import status
 from app import models, paths
 import requests
-<<<<<<< HEAD
-from cryptography.fernet import Fernet
-import ast
-
-
-=======
 from datetime import datetime
 from cryptography.fernet import Fernet
 import ast
 
->>>>>>> feature/add-mobile-access
 cookie_sec = APIKeyCookie(name="key")
 
 router = APIRouter()
@@ -26,11 +19,7 @@ def get_notes(data: models.UonetPlusUczen, key: str = Depends(cookie_sec)):
     notes = []
     for note in response.json()["data"]["Uwagi"]:
         note = models.Note(
-<<<<<<< HEAD
-           date=note["DataWpisu"],
-=======
            date=datetime.fromisoformat(note["DataWpisu"]).strftime('%d.%m.%Y %H:%M'),
->>>>>>> feature/add-mobile-access
            teacher=note["Nauczyciel"],
            category=note["Kategoria"],
            content=note["TrescUwagi"],
@@ -39,15 +28,6 @@ def get_notes(data: models.UonetPlusUczen, key: str = Depends(cookie_sec)):
            category_type=bool(note["KategoriaTyp"])
         )
         notes.append(note)
-<<<<<<< HEAD
-    notes_and_achievements = {
-        "notes": notes,
-        "achievements": response.json()["data"]["Osiagniecia"]
-    }
-
-    return notes_and_achievements
-
-=======
     notes_and_achievements = models.NotesAndAchievements(
         notes=notes,
         achievements=response.json()["data"]["Osiagniecia"]
@@ -208,15 +188,13 @@ def build_url(subd: str = None, host: str = None, path: str = None, ssl: bool = 
 
 def get_response(data, path):
     session = requests.Session()
-<<<<<<< HEAD
     headers = {
         "Accept-Encoding": "gzip, deflate, br",
         "Accept": "*/*",
         "Connection": "keep-alive",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0) Gecko/20100101 Firefox/93.0"
     }
-=======
->>>>>>> feature/add-mobile-access
+
     data.vulcan_cookies.update(data.student)
     url = build_url(
         subd="uonetplus-uczen",
@@ -228,12 +206,8 @@ def get_response(data, path):
     )
     response = session.post(
         url=url,
-<<<<<<< HEAD
-        headers=headers,
-=======
         headers=data.headers,
         json=data.payload,
->>>>>>> feature/add-mobile-access
         cookies=data.vulcan_cookies,
     )
     if response.status_code != 200:

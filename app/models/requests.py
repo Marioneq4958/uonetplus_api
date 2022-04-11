@@ -9,15 +9,6 @@ class Login(BaseModel):
     ssl: Optional[bool]
 
 class UonetPlusUczen(BaseModel):
-<<<<<<< HEAD
-    vulcan_cookies: object
-    student: object
-    school_id: str
-    symbol: str
-    host: str
-    ssl: bool
-
-=======
     host: str
     symbol: str
     school_id: str
@@ -26,4 +17,3 @@ class UonetPlusUczen(BaseModel):
     student: object
     vulcan_cookies: object
     payload: Optional[dict]
->>>>>>> feature/add-mobile-access

@@ -32,8 +32,5 @@ class Student(BaseModel):
     school_name: str
     school_symbol: str
     cookies: object
-<<<<<<< HEAD
-=======
     headers: object
->>>>>>> feature/add-mobile-access
     semesters: list
