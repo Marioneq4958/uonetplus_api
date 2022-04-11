@@ -166,7 +166,6 @@ def get_register_device_token(data: models.UonetPlusUczen, key: str = Depends(co
     response = get_response(data, path)
     return response.json()
 
->>>>>>> feature/add-mobile-access
 def build_url(subd: str = None, host: str = None, path: str = None, ssl: bool = True, **kwargs):
     if ssl:
         url = 'https://'
