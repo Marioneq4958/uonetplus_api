@@ -1,60 +1,259 @@
-from http import cookies
-from pydoc import cli
 from fastapi.testclient import TestClient
-import json
 from main import app
 
 client = TestClient(app)
 
-
-#def test_read_item():
-    #response = client.post("/login", headers={"Content-Type": "application/json"})
-    #assert response.status_code == 405
-    #assert response.json() == {
-        #"id": "foo",
-        #"title": "Foo",
-        #"description": "There goes my hero",
-    #}
-
 def test_login_correct():
-    response = client.post("/login",headers={"Content-Type": "application/json"},json={"username": "jan@fakelog.cf", "password": "jan123", "host": "fakelog.cf", "symbol": "powiatwulkanowy", "ssl": "false"},)
+    response = client.post(
+        "/login",
+        headers={"Content-Type": "application/json"},
+        json={
+            "username": "jan@fakelog.cf",
+            "password": "jan123",
+            "host": "fakelog.cf",
+            "symbol": "powiatwulkanowy",
+            "ssl": False
+        },
+    )
     assert response.status_code == 200
     assert response.json()["symbol"] == "powiatwulkanowy"
     assert response.json()["host"] == "fakelog.cf"
 
 def test_login_incorrect():
-    response = client.post("/login",headers={"Content-Type": "application/json"},json={"username": "cipanowie@pocz.pl", "password": "dupa123", "host": "fakelog.cf", "symbol": "powiatwulkanowy", "ssl": "false"},)
+    response = client.post(
+        "/login",
+        headers={"Content-Type": "application/json"},
+        json={
+            "username": "maria@fakelog.cf",
+            "password": "maria123",
+            "host": "fakelog.cf",
+            "symbol": "powiatwulkanowy",
+            "ssl": False
+        },
+    )
     assert response.status_code == 403
-    #print(response.json())
-    assert response.json() == {
-        "detail": "Username or password is incorrect"
-    }
-    #assert response.html()["host"] == "fakelog.cf"
-    #ciastka = response.json()["vulcan_cookies"]
-    #print(ciastka)
+    assert response.json()["detail"] == "Username or password is incorrect"
 
 def test_symbol_incorrect():
-    response = client.post("/login",headers={"Content-Type": "application/json"},json={"username": "jan@fakelog.cf", "password": "jan123", "host": "fakelog.cf", "symbol": "warszawa", "ssl": "false"},)
+    response = client.post(
+        "/login",
+        headers={"Content-Type": "application/json"},
+        json={
+            "username": "jan@fakelog.cf",
+            "password": "jan123",
+            "host": "fakelog.cf",
+            "symbol": "warszawa",
+            "ssl": False
+        },
+    )
     assert response.status_code == 403
-    #print(response.json())
-    assert response.json() == {
-        'detail': 'Symbol is incorrect'
-    }
+    assert response.json()["detail"] == "Symbol is incorrect"
 
 def test_notes():
-    response = client.post("/login",headers={"Content-Type": "application/json"},json={"username": "jan@fakelog.cf", "password": "jan123", "host": "fakelog.cf", "symbol": "powiatwulkanowy", "ssl": "false"},)
-    cookies = response.json()["vulcan_cookies"]
-    response = client.post("/uonetplus-uczen/notes",headers={"Content-Type": "application/json"},json={"vulcan_cookies": cookies, "student": {"idBiezacyDziennik": "15", "idBiezacyUczen": "1", "idBiezacyDziennikPrzedszkole": "0", "biezacyRokSzkolny": "2018"}, "school_id": "123456", "host": "fakelog.cf", "symbol": "powiatwulkanowy", "ssl": "false"},)
+    login_response = client.post(
+        "/login",
+        headers={"Content-Type": "application/json"},
+        json={
+            "username": "jan@fakelog.cf",
+            "password": "jan123",
+            "host": "fakelog.cf",
+            "symbol": "powiatwulkanowy",
+            "ssl": False
+        },
+    )
+    response = client.post(
+        "/uonetplus-uczen/notes",
+        headers={"Content-Type": "application/json"},
+        json={
+            "host": login_response.json()["host"],
+            "symbol": login_response.json()["symbol"],
+            "school_id": login_response.json()["students"][0]["school_id"],
+            "ssl": login_response.json()["ssl"],
+            "headers": login_response.json()["students"][0]["headers"],
+            "student": login_response.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "payload": {},
+        },
+    )
     assert response.status_code == 200
-    #print(response.json())
     assert response.json()['notes'][0]['teacher'] == 'Karolina Kowalska [AN]'
     assert response.json()['notes'][3]['content'] == 'Litwo! Ojczyzno moja! Ty jesteś jak zdrowie. Ile cię trzeba cenić, ten tylko aż kędy pieprz rośnie gdzie podział się? szukać prawodawstwa.'
 
 def test_grades():
-    response = client.post("/login",headers={"Content-Type": "application/json"},json={"username": "jan@fakelog.cf", "password": "jan123", "host": "fakelog.cf", "symbol": "powiatwulkanowy", "ssl": "false"},)
-    cookies = response.json()["vulcan_cookies"]
-    response = client.post("/uonetplus-uczen/grades",headers={"Content-Type": "application/json"},json={"vulcan_cookies": cookies, "student": {"idBiezacyDziennik": "15", "idBiezacyUczen": "1", "idBiezacyDziennikPrzedszkole": "0", "biezacyRokSzkolny": "2018"}, "school_id": "123456", "host": "fakelog.cf", "symbol": "powiatwulkanowy", "ssl": "false", "json": {"okres": 16}},)
+    login_response = client.post(
+        "/login",
+        headers={"Content-Type": "application/json"},
+        json={
+            "username": "jan@fakelog.cf",
+            "password": "jan123",
+            "host": "fakelog.cf",
+            "symbol": "powiatwulkanowy",
+            "ssl": False
+        },
+    )
+    response = client.post(
+        "/uonetplus-uczen/grades",
+        headers={"Content-Type": "application/json"},
+        json={
+            "host": login_response.json()["host"],
+            "symbol": login_response.json()["symbol"],
+            "school_id": login_response.json()["students"][0]["school_id"],
+            "ssl": login_response.json()["ssl"],
+            "headers": login_response.json()["students"][0]["headers"],
+            "student": login_response.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "payload": {"okres": 16},
+        },
+    )
     assert response.status_code == 200
-    #print(response.json())
     assert response.json()["subjects"][0]["grades"][0]["teacher"] == 'Karolina Kowalska'
-    #assert response.json()['grades'][3]['grade'] == '4'
+    assert response.json()["subjects"][0]["grades"][0]["symbol"] == 'Akt'
+
+def test_school_info():
+    login_response = client.post(
+        "/login",
+        headers={"Content-Type": "application/json"},
+        json={
+            "username": "jan@fakelog.cf",
+            "password": "jan123",
+            "host": "fakelog.cf",
+            "symbol": "powiatwulkanowy",
+            "ssl": False
+        },
+    )
+    response = client.post(
+        "/uonetplus-uczen/school-info",
+        headers={"Content-Type": "application/json"},
+        json={
+            "host": login_response.json()["host"],
+            "symbol": login_response.json()["symbol"],
+            "school_id": login_response.json()["students"][0]["school_id"],
+            "ssl": login_response.json()["ssl"],
+            "headers": login_response.json()["students"][0]["headers"],
+            "student": login_response.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "payload": {},
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()["school"]["name"] == "Publiczna szkoła Wulkanowego nr 1 w fakelog.cf"
+    assert response.json()["teachers"][0]["name"] == "Karolina Kowalska [AN]"
+    print(response.json())
+
+def test_conferences():
+    login_response = client.post(
+        "/login",
+        headers={"Content-Type": "application/json"},
+        json={
+            "username": "jan@fakelog.cf",
+            "password": "jan123",
+            "host": "fakelog.cf",
+            "symbol": "powiatwulkanowy",
+            "ssl": False
+        },
+    )
+    response = client.post(
+        "/uonetplus-uczen/conferences",
+        headers={"Content-Type": "application/json"},
+        json={
+            "host": login_response.json()["host"],
+            "symbol": login_response.json()["symbol"],
+            "school_id": login_response.json()["students"][0]["school_id"],
+            "ssl": login_response.json()["ssl"],
+            "headers": login_response.json()["students"][0]["headers"],
+            "student": login_response.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "payload": {},
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()[1]["title"] == "ZSW"
+
+def test_mobile_access_registed():
+    login_response = client.post(
+        "/login",
+        headers={"Content-Type": "application/json"},
+        json={
+            "username": "jan@fakelog.cf",
+            "password": "jan123",
+            "host": "fakelog.cf",
+            "symbol": "powiatwulkanowy",
+            "ssl": False
+        },
+    )
+    response = client.post(
+        "/uonetplus-uczen/mobile-access/get-registered-devices",
+        headers={"Content-Type": "application/json"},
+        json={
+            "host": login_response.json()["host"],
+            "symbol": login_response.json()["symbol"],
+            "school_id": login_response.json()["students"][0]["school_id"],
+            "ssl": login_response.json()["ssl"],
+            "headers": login_response.json()["students"][0]["headers"],
+            "student": login_response.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "payload": {},
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()[0]["name"] == "To Be Filled By O.E.M.#To Be Filled By O.E.M. (Windows 8.1)"
+    assert response.json()[1]["id"] == 1234
+
+def test_mobile_access_register():
+    login_response = client.post(
+        "/login",
+        headers={"Content-Type": "application/json"},
+        json={
+            "username": "jan@fakelog.cf",
+            "password": "jan123",
+            "host": "fakelog.cf",
+            "symbol": "powiatwulkanowy",
+            "ssl": False
+        },
+    )
+    response = client.post(
+        "/uonetplus-uczen/mobile-access/register-device",
+        headers={"Content-Type": "application/json"},
+        json={
+            "host": login_response.json()["host"],
+            "symbol": login_response.json()["symbol"],
+            "school_id": login_response.json()["students"][0]["school_id"],
+            "ssl": login_response.json()["ssl"],
+            "headers": login_response.json()["students"][0]["headers"],
+            "student": login_response.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "payload": {},
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()["token"] == "FK100000"
+    assert response.json()["pin"] == "999999"
+
+def test_mobile_access_delete_registed():
+    login_response = client.post(
+        "/login",
+        headers={"Content-Type": "application/json"},
+        json={
+            "username": "jan@fakelog.cf",
+            "password": "jan123",
+            "host": "fakelog.cf",
+            "symbol": "powiatwulkanowy",
+            "ssl": False
+        },
+    )
+    response = client.post(
+        "/uonetplus-uczen/mobile-access/delete-registered-device",
+        headers={"Content-Type": "application/json"},
+        json={
+            "host": login_response.json()["host"],
+            "symbol": login_response.json()["symbol"],
+            "school_id": login_response.json()["students"][0]["school_id"],
+            "ssl": login_response.json()["ssl"],
+            "headers": login_response.json()["students"][0]["headers"],
+            "student": login_response.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "payload": {"id": 1234},
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()["success"] == True
