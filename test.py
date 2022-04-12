@@ -3,7 +3,10 @@ from main import app
 
 client = TestClient(app)
 
+login_data = []
+
 def test_login_correct():
+    global login_data
     response = client.post(
         "/login",
         headers={"Content-Type": "application/json"},
@@ -18,6 +21,7 @@ def test_login_correct():
     assert response.status_code == 200
     assert response.json()["symbol"] == "powiatwulkanowy"
     assert response.json()["host"] == "fakelog.cf"
+    login_data = response
 
 def test_login_incorrect():
     response = client.post(
@@ -50,28 +54,17 @@ def test_symbol_incorrect():
     assert response.json()["detail"] == "Symbol is incorrect"
 
 def test_notes():
-    login_response = client.post(
-        "/login",
-        headers={"Content-Type": "application/json"},
-        json={
-            "username": "jan@fakelog.cf",
-            "password": "jan123",
-            "host": "fakelog.cf",
-            "symbol": "powiatwulkanowy",
-            "ssl": False
-        },
-    )
     response = client.post(
         "/uonetplus-uczen/notes",
         headers={"Content-Type": "application/json"},
         json={
-            "host": login_response.json()["host"],
-            "symbol": login_response.json()["symbol"],
-            "school_id": login_response.json()["students"][0]["school_id"],
-            "ssl": login_response.json()["ssl"],
-            "headers": login_response.json()["students"][0]["headers"],
-            "student": login_response.json()["students"][0]["cookies"],
-            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "host": login_data.json()["host"],
+            "symbol": login_data.json()["symbol"],
+            "school_id": login_data.json()["students"][0]["school_id"],
+            "ssl": login_data.json()["ssl"],
+            "headers": login_data.json()["students"][0]["headers"],
+            "student": login_data.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_data.json()["vulcan_cookies"],
             "payload": {},
         },
     )
@@ -80,28 +73,17 @@ def test_notes():
     assert response.json()['notes'][3]['content'] == 'Litwo! Ojczyzno moja! Ty jesteś jak zdrowie. Ile cię trzeba cenić, ten tylko aż kędy pieprz rośnie gdzie podział się? szukać prawodawstwa.'
 
 def test_grades():
-    login_response = client.post(
-        "/login",
-        headers={"Content-Type": "application/json"},
-        json={
-            "username": "jan@fakelog.cf",
-            "password": "jan123",
-            "host": "fakelog.cf",
-            "symbol": "powiatwulkanowy",
-            "ssl": False
-        },
-    )
     response = client.post(
         "/uonetplus-uczen/grades",
         headers={"Content-Type": "application/json"},
         json={
-            "host": login_response.json()["host"],
-            "symbol": login_response.json()["symbol"],
-            "school_id": login_response.json()["students"][0]["school_id"],
-            "ssl": login_response.json()["ssl"],
-            "headers": login_response.json()["students"][0]["headers"],
-            "student": login_response.json()["students"][0]["cookies"],
-            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "host": login_data.json()["host"],
+            "symbol": login_data.json()["symbol"],
+            "school_id": login_data.json()["students"][0]["school_id"],
+            "ssl": login_data.json()["ssl"],
+            "headers": login_data.json()["students"][0]["headers"],
+            "student": login_data.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_data.json()["vulcan_cookies"],
             "payload": {"okres": 16},
         },
     )
@@ -110,28 +92,17 @@ def test_grades():
     assert response.json()["subjects"][0]["grades"][0]["symbol"] == 'Akt'
 
 def test_school_info():
-    login_response = client.post(
-        "/login",
-        headers={"Content-Type": "application/json"},
-        json={
-            "username": "jan@fakelog.cf",
-            "password": "jan123",
-            "host": "fakelog.cf",
-            "symbol": "powiatwulkanowy",
-            "ssl": False
-        },
-    )
     response = client.post(
         "/uonetplus-uczen/school-info",
         headers={"Content-Type": "application/json"},
         json={
-            "host": login_response.json()["host"],
-            "symbol": login_response.json()["symbol"],
-            "school_id": login_response.json()["students"][0]["school_id"],
-            "ssl": login_response.json()["ssl"],
-            "headers": login_response.json()["students"][0]["headers"],
-            "student": login_response.json()["students"][0]["cookies"],
-            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "host": login_data.json()["host"],
+            "symbol": login_data.json()["symbol"],
+            "school_id": login_data.json()["students"][0]["school_id"],
+            "ssl": login_data.json()["ssl"],
+            "headers": login_data.json()["students"][0]["headers"],
+            "student": login_data.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_data.json()["vulcan_cookies"],
             "payload": {},
         },
     )
@@ -141,28 +112,17 @@ def test_school_info():
     print(response.json())
 
 def test_conferences():
-    login_response = client.post(
-        "/login",
-        headers={"Content-Type": "application/json"},
-        json={
-            "username": "jan@fakelog.cf",
-            "password": "jan123",
-            "host": "fakelog.cf",
-            "symbol": "powiatwulkanowy",
-            "ssl": False
-        },
-    )
     response = client.post(
         "/uonetplus-uczen/conferences",
         headers={"Content-Type": "application/json"},
         json={
-            "host": login_response.json()["host"],
-            "symbol": login_response.json()["symbol"],
-            "school_id": login_response.json()["students"][0]["school_id"],
-            "ssl": login_response.json()["ssl"],
-            "headers": login_response.json()["students"][0]["headers"],
-            "student": login_response.json()["students"][0]["cookies"],
-            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "host": login_data.json()["host"],
+            "symbol": login_data.json()["symbol"],
+            "school_id": login_data.json()["students"][0]["school_id"],
+            "ssl": login_data.json()["ssl"],
+            "headers": login_data.json()["students"][0]["headers"],
+            "student": login_data.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_data.json()["vulcan_cookies"],
             "payload": {},
         },
     )
@@ -170,28 +130,17 @@ def test_conferences():
     assert response.json()[1]["title"] == "ZSW"
 
 def test_mobile_access_registed():
-    login_response = client.post(
-        "/login",
-        headers={"Content-Type": "application/json"},
-        json={
-            "username": "jan@fakelog.cf",
-            "password": "jan123",
-            "host": "fakelog.cf",
-            "symbol": "powiatwulkanowy",
-            "ssl": False
-        },
-    )
     response = client.post(
         "/uonetplus-uczen/mobile-access/get-registered-devices",
         headers={"Content-Type": "application/json"},
         json={
-            "host": login_response.json()["host"],
-            "symbol": login_response.json()["symbol"],
-            "school_id": login_response.json()["students"][0]["school_id"],
-            "ssl": login_response.json()["ssl"],
-            "headers": login_response.json()["students"][0]["headers"],
-            "student": login_response.json()["students"][0]["cookies"],
-            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "host": login_data.json()["host"],
+            "symbol": login_data.json()["symbol"],
+            "school_id": login_data.json()["students"][0]["school_id"],
+            "ssl": login_data.json()["ssl"],
+            "headers": login_data.json()["students"][0]["headers"],
+            "student": login_data.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_data.json()["vulcan_cookies"],
             "payload": {},
         },
     )
@@ -200,28 +149,17 @@ def test_mobile_access_registed():
     assert response.json()[1]["id"] == 1234
 
 def test_mobile_access_register():
-    login_response = client.post(
-        "/login",
-        headers={"Content-Type": "application/json"},
-        json={
-            "username": "jan@fakelog.cf",
-            "password": "jan123",
-            "host": "fakelog.cf",
-            "symbol": "powiatwulkanowy",
-            "ssl": False
-        },
-    )
     response = client.post(
         "/uonetplus-uczen/mobile-access/register-device",
         headers={"Content-Type": "application/json"},
         json={
-            "host": login_response.json()["host"],
-            "symbol": login_response.json()["symbol"],
-            "school_id": login_response.json()["students"][0]["school_id"],
-            "ssl": login_response.json()["ssl"],
-            "headers": login_response.json()["students"][0]["headers"],
-            "student": login_response.json()["students"][0]["cookies"],
-            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "host": login_data.json()["host"],
+            "symbol": login_data.json()["symbol"],
+            "school_id": login_data.json()["students"][0]["school_id"],
+            "ssl": login_data.json()["ssl"],
+            "headers": login_data.json()["students"][0]["headers"],
+            "student": login_data.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_data.json()["vulcan_cookies"],
             "payload": {},
         },
     )
@@ -230,28 +168,17 @@ def test_mobile_access_register():
     assert response.json()["pin"] == "999999"
 
 def test_mobile_access_delete_registed():
-    login_response = client.post(
-        "/login",
-        headers={"Content-Type": "application/json"},
-        json={
-            "username": "jan@fakelog.cf",
-            "password": "jan123",
-            "host": "fakelog.cf",
-            "symbol": "powiatwulkanowy",
-            "ssl": False
-        },
-    )
     response = client.post(
         "/uonetplus-uczen/mobile-access/delete-registered-device",
         headers={"Content-Type": "application/json"},
         json={
-            "host": login_response.json()["host"],
-            "symbol": login_response.json()["symbol"],
-            "school_id": login_response.json()["students"][0]["school_id"],
-            "ssl": login_response.json()["ssl"],
-            "headers": login_response.json()["students"][0]["headers"],
-            "student": login_response.json()["students"][0]["cookies"],
-            "vulcan_cookies": login_response.json()["vulcan_cookies"],
+            "host": login_data.json()["host"],
+            "symbol": login_data.json()["symbol"],
+            "school_id": login_data.json()["students"][0]["school_id"],
+            "ssl": login_data.json()["ssl"],
+            "headers": login_data.json()["students"][0]["headers"],
+            "student": login_data.json()["students"][0]["cookies"],
+            "vulcan_cookies": login_data.json()["vulcan_cookies"],
             "payload": {"id": 1234},
         },
     )
