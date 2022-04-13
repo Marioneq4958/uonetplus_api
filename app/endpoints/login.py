@@ -111,6 +111,7 @@ def get_students(symbol: str, host: str, ssl: bool, cers, session):
                 symbol=symbol,
                 host=host,
                 schoolid=id,
+                ssl=ssl,
             )
             page = session.get(url)
             school_name = get_script_param(page.text, "organizationName")
