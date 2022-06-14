@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 
+
 class SchoolInfo(BaseModel):
     school: object
     teachers: list
+
 
 class School(BaseModel):
     name: str
@@ -11,7 +13,7 @@ class School(BaseModel):
     headmaster: str
     pedagogue: str
 
+
 class Teacher(BaseModel):
     name: str
     subject: str
-

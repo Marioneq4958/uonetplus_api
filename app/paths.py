@@ -27,6 +27,12 @@ class UCZEN:
     UWAGIIOSIAGNIECIA_GET: str = "/{SYMBOL}/{SCHOOLID}/UwagiIOsiagniecia.mvc/Get"
     ZEBRANIA_GET: str = "/{SYMBOL}/{SCHOOLID}/Zebrania.mvc/Get"
     SZKOLAINAUCZYCIELE_GET: str = "/{SYMBOL}/{SCHOOLID}/SzkolaINauczyciele.mvc/Get"
-    ZAREJESTROWANEURZADZENIA_GET: str = "/{SYMBOL}/{SCHOOLID}/ZarejestrowaneUrzadzenia.mvc/Get"
-    ZAREJESTROWANEURZADZENIA_DELETE: str = "/{SYMBOL}/{SCHOOLID}/ZarejestrowaneUrzadzenia.mvc/Delete"
-    REJESTRACJAURZADZENIATOKEN_GET: str = "/{SYMBOL}/{SCHOOLID}/RejestracjaUrzadzeniaToken.mvc/Get"
+    ZAREJESTROWANEURZADZENIA_GET: str = (
+        "/{SYMBOL}/{SCHOOLID}/ZarejestrowaneUrzadzenia.mvc/Get"
+    )
+    ZAREJESTROWANEURZADZENIA_DELETE: str = (
+        "/{SYMBOL}/{SCHOOLID}/ZarejestrowaneUrzadzenia.mvc/Delete"
+    )
+    REJESTRACJAURZADZENIATOKEN_GET: str = (
+        "/{SYMBOL}/{SCHOOLID}/RejestracjaUrzadzeniaToken.mvc/Get"
+    )

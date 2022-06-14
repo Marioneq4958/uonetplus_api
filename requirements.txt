@@ -2,9 +2,14 @@ beautifulsoup4
 bs4
 requests
 cryptography
+pytest
 pydantic~=1.9.0
 uvicorn~=0.17.5
 fastapi~=0.74.0
 starlette~=0.17.1
-pytest
 lxml
+sty
+pytest-xdist
+gitpython
+pydantic[email]
+itsdangerous

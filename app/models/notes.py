@@ -1,9 +1,11 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class NotesAndAchievements(BaseModel):
     notes: list
     achievements: list
+
 
 class Note(BaseModel):
     date: str

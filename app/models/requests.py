@@ -1,12 +1,13 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class Login(BaseModel):
     username: str
     password: str
-    symbol: str
     host: str
     ssl: Optional[bool]
+
 
 class UonetPlusUczen(BaseModel):
     host: str
@@ -15,5 +16,5 @@ class UonetPlusUczen(BaseModel):
     ssl: bool
     headers: object
     student: object
-    vulcan_cookies: object
+    session_data: object
     payload: Optional[dict]
