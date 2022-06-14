@@ -1,4 +1,4 @@
-### Unofficial Uczniowie Optivium Net Plus API used by [Wulkanowy Web](https://github.com/wulkanowy/wulkanowy-web)
+### Unofficial Uczniowie Optivium Net Plus API used by [Zaptyp/Wulkanowy Web](https://github.com/Zaptyp/wulkanowy-web)
 
 ## 1. Install dependencies
 
