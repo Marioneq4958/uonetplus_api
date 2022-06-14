@@ -12,7 +12,7 @@ def status_check(status_check_code, status_check_json, fg):
         )
     elif status_check_code == 307:
         status_check_response = print(
-            "\n" + fg.orange + "Temporary redirect " + str(status_check_code) + fg.rs
+            "\n" + fg.orange + "Temporary redirecf " + str(status_check_code) + fg.rs
         )
     elif status_check_code == 308:
         status_check_response = print(
