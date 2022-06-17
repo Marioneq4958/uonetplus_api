@@ -19,11 +19,11 @@ def convert_size(size_bytes):
 class Github:
     try:
         try:
-            repos = Repo(path=r"./wulkanowy-web/")
+            repos = Repo(path=r"./wulkanowy-web/", search_parent_directories=True)
         except:
-            repos = Repo(path=r"../..")
+            repos = Repo(path=r"../..", search_parent_directories=True)
     except:
-        repos = Repo(path=r"..")
+        repos = Repo(path=r".", search_parent_directories=True)
     try:        
         current_commit_hash = repos.head.commit.hexsha
     except:
@@ -54,7 +54,7 @@ class Github:
     except:
         repo_url = "ERROR - Cannot get repo url!"
     try:
-        repo_name = re.search(r"\/[a-zA-Z]+\/[a-zA-Z]+.*", str(repo_url)).group(0)
+        repo_name = re.search(r"\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+.*", str(repo_url)).group(0)
     except:
         repo_name = "ERROR - Cannot get repo name!"
     try:
@@ -98,7 +98,7 @@ def get_branch_name(repozi: str = Depends(Github)):
         "repo_name": Github.repo_name[1:],
         "repo_link": Github.repo_url,
         "repo_commit_number": Github.repo_commit_number,
-        "repo_size": Github.repo_size[14:],
+        "repo_size": Github.repo_size[12:],
         "branch_info": [
             {
                 "active_branch": Github.current_branch,
