@@ -21,7 +21,10 @@ class Github:
         try:
             repos = Repo(path=r"./wulkanowy-web/")
         except:
-            repos = Repo(path=r"../..")
+            try:
+                repos = Repo(path=r"../..")
+            except:
+                repos = None
     except:
         repos = Repo(path=r"..")
     try:        

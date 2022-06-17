@@ -18,3 +18,11 @@ class UonetPlusUczen(BaseModel):
     student: object
     session_data: object
     payload: Optional[dict]
+
+
+class UonetPlusUzytkownik(BaseModel):
+    host: str
+    symbol: str
+    ssl: bool
+    student: object
+    session_data: object

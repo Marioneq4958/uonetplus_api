@@ -12,9 +12,7 @@ class UONETPLUS:
 
 
 class UZYTKOWNIK:
-    NOWAWIADOMOSC_GETJEDNOSTKIUZYTKOWNIKA: str = (
-        "/{SYMBOL}/NowaWiadomosc.mvc/GetJednostkiUzytkownika"
-    )
+    WIADOMOSC_GETINBOXMESSAGES: str = "/{SYMBOL}/Wiadomosc.mvc/GetInboxMessages?dataOd={START}&dataDo={END}"
 
 
 class UCZEN:
