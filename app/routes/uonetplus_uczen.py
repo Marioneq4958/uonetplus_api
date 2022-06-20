@@ -190,7 +190,7 @@ def build_url(subd: str = None, host: str = None, path: str = None, ssl: bool = 
 
 def get_response(data: dict, path: str, session_cookies: dict) -> requests.models.Response:
     session = requests.Session()
-    session_cookies.update(data.student)
+    session_cookies.update(data.register_cookies)
     url = build_url(
         subd="uonetplus-uczen",
         path=path,
