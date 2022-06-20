@@ -20,7 +20,7 @@ def login_test(username, password, host, ssl, fg):
     assert login.json()[0]["session_data"]
     session_data = login.json()[0]["session_data"]
     headers = login.json()[0]["schools"][0]["headers"]
-    student = login.json()[0]["schools"][0]["students"][0]["cookies"]
+    student = login.json()[0]["schools"][0]["students"][0]["registers"][0]["cookies"]
     symbol = login.json()[0]["name"]
     school_id = login.json()[0]["schools"][0]["id"]
     status_check(login.status_code, login.json(), fg)
