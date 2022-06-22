@@ -1,13 +1,12 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
 
 
 class Conference(BaseModel):
-    title: str
+    id: int
     subject: str
-    agenda: str
+    agenda: Optional[str]
     present_on_conference: str
     online: Optional[str]
-    id: int
     date: str
+    place: str
