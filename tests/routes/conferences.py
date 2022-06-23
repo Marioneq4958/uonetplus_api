@@ -22,4 +22,3 @@ def conference_test(session_data, headers, register_cookies, school_id, host, sy
         response.json()[0]["subject"]
         == "Podsumowanie I semestru - średnia klasy, oceny, frekwencja, zachowanie."
     )
-    assert response.json()[1]["date"] == "06.09.2019 16:30"
