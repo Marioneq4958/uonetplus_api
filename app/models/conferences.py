@@ -8,5 +8,5 @@ class Conference(BaseModel):
     agenda: Optional[str]
     present_on_conference: str
     online: Optional[str]
-    date: str
+    date: Optional[str]
     place: str

@@ -60,13 +60,17 @@ def get_conferences(data: models.UonetPlusUczen, request: Request):
     for conference in response.json()["data"]:
         split = conference["Tytul"].split(", ")
         place = split[2]
+        try:
+            date = datetime.fromisoformat(conference["DataSpotkania"]).strftime("%d.%m.%Y %H:%M")
+        except:
+            date = None
         conference = models.Conference(
             id=conference["Id"],
             subject=conference["TematZebrania"],
             agenda=conference["Agenda"],
             present_on_conference=conference["ObecniNaZebraniu"],
             online=conference["ZebranieOnline"],
-            date=datetime.fromisoformat(conference["DataSpotkania"]).strftime("%d.%m.%Y %H:%M"),
+            date=date,
             place=place
         )
         conferences.append(conference)
