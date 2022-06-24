@@ -9,4 +9,4 @@ class Conference(BaseModel):
     present_on_conference: str
     online: Optional[str]
     date: Optional[str]
-    place: str
+    place: Optional[str]
