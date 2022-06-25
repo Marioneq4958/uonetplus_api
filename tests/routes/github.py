@@ -7,14 +7,11 @@ import re
 def github_info_test(fg):
     try:
         try:
-            repos = Repo(path=r"./wulkanowy-web/")
+            repos = Repo(path=r"./wulkanowy-web/", search_parent_directories=True)
         except:
-            try:
-                repos = Repo(path=r"../..")
-            except:
-                repos = None
+            repos = Repo(path=r"../..", search_parent_directories=True)
     except:
-        repos = Repo(path=r"..")
+        repos = Repo(path=r".", search_parent_directories=True)
     try:        
         current_commit_hash = repos.head.commit.hexsha
     except:
@@ -36,7 +33,7 @@ def github_info_test(fg):
     except:
         repo_url = "ERROR - Cannot get repo url!"
     try:
-        repo_name = re.search(r"\/[a-zA-Z]+\/[a-zA-Z]+.*", str(repo_url)).group(0)
+        repo_name = re.search(r"\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+.*", str(repo_url)).group(0)
     except:
         repo_name = "ERROR - Cannot get repo name!"
     try:

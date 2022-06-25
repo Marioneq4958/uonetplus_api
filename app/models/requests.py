@@ -15,7 +15,7 @@ class UonetPlusUczen(BaseModel):
     school_id: str
     ssl: bool
     headers: object
-    student: object
+    register_cookies: object
     session_data: object
     payload: Optional[dict]
 

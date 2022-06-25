@@ -1,4 +1,4 @@
-from .register import RegisterSymbol, RegisterSchool, RegisterStudent, RegisterSemester
+from .register import RegisterSymbol, RegisterSchool, RegisterStudent, RegisterSemester, Register
 from .requests import Login, UonetPlusUczen, UonetPlusUzytkownik
 from .notes import NotesAndAchievements, Note
 from .grades import Grades, Subject, Grade, DescriptiveGrade

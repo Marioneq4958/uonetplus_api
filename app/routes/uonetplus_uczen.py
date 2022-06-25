@@ -59,16 +59,22 @@ def get_conferences(data: models.UonetPlusUczen, request: Request):
     conferences = []
     for conference in response.json()["data"]:
         split = conference["Tytul"].split(", ")
-        title = ", ".join(split[2:])
-        date = datetime.strptime(split[1].replace(" godzina", ""), "%d.%m.%Y %H:%M")
+        try:
+            place = split[2]
+        except:
+            place = None
+        try:
+            date = datetime.fromisoformat(conference["DataSpotkania"]).strftime("%d.%m.%Y %H:%M")
+        except:
+            date = None
         conference = models.Conference(
-            title=title,
+            id=conference["Id"],
             subject=conference["TematZebrania"],
             agenda=conference["Agenda"],
-            present_on_conference=conference["ObecniNaZebraniu"],
+            present_at_conference=conference["ObecniNaZebraniu"],
             online=conference["ZebranieOnline"],
-            id=conference["Id"],
-            date=date.strftime("%d.%m.%Y %H:%M"),
+            date=date,
+            place=place
         )
         conferences.append(conference)
     return conferences
@@ -190,7 +196,7 @@ def build_url(subd: str = None, host: str = None, path: str = None, ssl: bool = 
 
 def get_response(data: dict, path: str, session_cookies: dict) -> requests.models.Response:
     session = requests.Session()
-    session_cookies.update(data.student)
+    session_cookies.update(data.register_cookies)
     url = build_url(
         subd="uonetplus-uczen",
         path=path,
