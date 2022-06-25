@@ -71,7 +71,7 @@ def get_conferences(data: models.UonetPlusUczen, request: Request):
             id=conference["Id"],
             subject=conference["TematZebrania"],
             agenda=conference["Agenda"],
-            present_on_conference=conference["ObecniNaZebraniu"],
+            present_at_conference=conference["ObecniNaZebraniu"],
             online=conference["ZebranieOnline"],
             date=date,
             place=place
