@@ -11,6 +11,15 @@ from app import models, paths, resources
 
 router = APIRouter()
 
+@router.get("/get-realms")
+def get_realms():
+    realms = []
+    for realm in resources.REALMS:
+        realms.append({
+            "realm": realm,
+            "name": resources.REALMS[realm]["name"]
+        })
+    return realms
 
 @router.post("/signin", response_model=list[models.RegisterSymbol])
 def signin(data: models.Login, request: Request):
