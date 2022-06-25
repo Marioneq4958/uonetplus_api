@@ -177,6 +177,25 @@ def delete_registered_device(data: models.UonetPlusUczen, request: Request):
     response = get_response(data, path, session_cookies)
     return response.json()
 
+@router.post("/semester-tests")
+def get_semester_tests(data: models.UonetPlusUczen, request: Request):
+    session_cookies = decrypt_session_data(request, data.session_data)
+    path = paths.UCZEN.EGZAMINYSEMESTRALNE_GET
+    response = get_response(data, path, session_cookies)
+    semester_tests = []
+    for semester_test in response.json()["data"]:
+        semester_tests.append(
+            models.SemesterTest(
+                subject=semester_test["Nazwa"],
+                position=semester_test["Pozycja"],
+                total_grade=semester_test["Laczna"].replace("Brak oceny", ""),
+                proposed_grade=semester_test["Proponowana"].replace("Brak oceny", ""),
+                written_form_grade=semester_test["Pisemna"].replace("Brak oceny", ""),
+                oral_form_grade=semester_test["Ustna"].replace("Brak oceny", "")
+            )
+        )
+
+
 def build_url(subd: str = None, host: str = None, path: str = None, ssl: bool = True, **kwargs) -> str:
     if ssl:
         url = "https://"
