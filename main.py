@@ -4,13 +4,18 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from cryptography.fernet import Fernet
-from app.routes import auth, uonetplus_uczen, github
+from app.routes import auth, uonetplus_uczen, github, uonetplus_uzytkownik
 from app.core.config import settings
 
-app = FastAPI(title="Uonetplus API", version="0.3.0")
+app = FastAPI(title="Uonetplus API", version="feature/messages")
 
 app.include_router(auth.router, prefix=settings.API_V1_URL + "/auth", tags=["auth"])
 app.include_router(uonetplus_uczen.router, prefix=settings.API_V1_URL + "/uonetplus-uczen", tags=["uonetplus-uczen"])
+app.include_router(
+    uonetplus_uzytkownik.router,
+    prefix=settings.API_V1_URL + "/uonetplus-uzytkownik",
+    tags=["uonetplus-uzytkownik"]
+)
 app.include_router(github.router, prefix=settings.API_V1_URL + "/github", tags=["github"])
 
 secret_key = Fernet.generate_key().decode("utf-8")
