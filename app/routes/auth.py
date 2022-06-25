@@ -194,9 +194,10 @@ def get_students_from_school(
         ssl=ssl,
     )
     students_response = session.post(url)
-    for student in students_response.json()["data"]:
+    for student_json in students_response.json()["data"]:
+        student = [student for student in students if student.student_id == student_json["IdUczen"]]
         semesters = []
-        for semester in student["Okresy"]:
+        for semester in student_json["Okresy"]:
             semester = models.RegisterSemester(
                 number=semester["NumerOkresu"],
                 level=semester["Poziom"],
@@ -208,31 +209,35 @@ def get_students_from_school(
                 id=semester["Id"],
             )
             semesters.append(semester)
-        student = models.RegisterStudent(
-            id=student["Id"],
-            student_id=student["IdUczen"],
-            student_name=student["UczenImie"],
-            student_second_name=student["UczenImie2"],
-            student_surname=student["UczenNazwisko"],
-            is_register=student["IsDziennik"],
-            register_id=student["IdDziennik"],
-            kindergarten_register_id=student["IdPrzedszkoleDziennik"],
-            level=student["Poziom"],
-            symbol=student["Symbol"],
-            name=student["Nazwa"],
-            year=student["DziennikRokSzkolny"],
-            start=datetime.fromisoformat(student["DziennikDataOd"]),
-            end=datetime.fromisoformat(student["DziennikDataDo"]),
-            full_name=student["UczenPelnaNazwa"],
+        register = models.Register(
+            is_register=student_json["IsDziennik"],
+            register_id=student_json["IdDziennik"],
+            kindergarten_register_id=student_json["IdPrzedszkoleDziennik"],
+            level=student_json["Poziom"],
+            symbol=student_json["Symbol"],
+            name=student_json["Nazwa"],
+            year=student_json["DziennikRokSzkolny"],
+            start=datetime.fromisoformat(student_json["DziennikDataOd"]),
+            end=datetime.fromisoformat(student_json["DziennikDataDo"]),
             cookies={
-                "idBiezacyDziennik": str(student["IdDziennik"]),
-                "idBiezacyUczen": str(student["IdUczen"]),
-                "idBiezacyDziennikPrzedszkole": str(student["IdPrzedszkoleDziennik"]),
-                "biezacyRokSzkolny": str(student["DziennikRokSzkolny"]),
+                "idBiezacyDziennik": str(student_json["IdDziennik"]),
+                "idBiezacyUczen": str(student_json["IdUczen"]),
+                "idBiezacyDziennikPrzedszkole": str(student_json["IdPrzedszkoleDziennik"]),
+                "biezacyRokSzkolny": str(student_json["DziennikRokSzkolny"]),
             },
-            semesters=semesters,
+            semesters=semesters
         )
-        students.append(student)
+        if student:
+            students[students.index(student[0])].registers.append(register)
+        else:
+            student = models.RegisterStudent(
+                student_id=student_json["IdUczen"],
+                student_name=student_json["UczenImie"],
+                student_second_name=student_json["UczenImie2"],
+                student_surname=student_json["UczenNazwisko"],
+                registers=[register]
+            )
+            students.append(student)
     return students
 
 
