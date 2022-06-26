@@ -36,3 +36,4 @@ class UCZEN:
     REJESTRACJAURZADZENIATOKEN_GET: str = (
         "/{SYMBOL}/{SCHOOLID}/RejestracjaUrzadzeniaToken.mvc/Get"
     )
+    UCZEN_GET: str = "/{SYMBOL}/{SCHOOLID}/Uczen.mvc/Get"

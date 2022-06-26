@@ -5,3 +5,4 @@ from .grades import Grades, Subject, Grade, DescriptiveGrade
 from .conferences import Conference
 from .school_info import SchoolInfo, School, Teacher
 from .mobile_access import Device, TokenResponse
+from .student_data import StudentData, StudentAddressData, StudentContactData, GuardianContactData, GuardianData
