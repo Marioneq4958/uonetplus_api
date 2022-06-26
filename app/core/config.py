@@ -13,9 +13,9 @@ class Settings(BaseSettings):
   PYTHON_VER = platform.python_version()
   if PYTHON_VER == "3.10.4" or PYTHON_VER == "3.10.5":
     try:
-      x = os.environ['W_BACKEND_CORS']
+      x = os.environ["W_BACKEND_CORS"]
       print(f'{fg.orange}Wykryto zmienną W_BACKEND_CORS!{fg.rs}')
-      CORS_ORIGINS: list = x
+      CORS_ORIGINS: str = x
     except:
       print(f'{fg.lightgreen}Nie wykryto zmiennej W_BACKEND_CORS. Używanie ustawień domyślnych!{fg.rs}')
       CORS_ORIGINS: list = [ "http://localhost:8080" ]
