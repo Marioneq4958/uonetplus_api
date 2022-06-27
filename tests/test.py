@@ -13,6 +13,7 @@ from tests.routes import (
     mobile_access_delete_registed,
     mobile_access_registed,
     github,
+    student_data,
 )
 from tests.checks import status_code
 
@@ -63,8 +64,7 @@ def test_login_incorrect():
 
 
 def test_notes():
-    notes.notes_test(session_data, headers, register_cookies, school_id,
-                     host, symbol, settings.TESTS_SSL, fg)
+    notes.notes_test(session_data, headers, register_cookies, school_id, host, symbol, settings.TESTS_SSL, fg)
 
 
 def test_grades():
@@ -103,5 +103,10 @@ def test_mobile_access_delete_registed():
     )
 
 
-def test_github_info():
-    github.github_info_test(fg)
+def test_github_backend_info():
+    github.github_info_backend_test(fg)
+
+
+def test_github_frontend_info():
+    github.github_info_frontend_test(fg)
+
