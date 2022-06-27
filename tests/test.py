@@ -13,7 +13,6 @@ from tests.routes import (
     mobile_access_delete_registed,
     mobile_access_registed,
     github,
-    student_data,
 )
 from tests.checks import status_code
 
