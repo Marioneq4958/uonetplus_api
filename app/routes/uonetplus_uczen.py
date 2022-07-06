@@ -219,7 +219,7 @@ def get_student_data(data: models.UonetPlusUczen, request: Request):
         name=response.json()["data"]["Imie"],
         second_name=response.json()["data"]["Imie2"],
         surname=response.json()["data"]["Nazwisko"],
-        sex=str(response.json()["data"]["Plec"]).replace("True", "men").replace("False", "woman"),
+        sex=str(response.json()["data"]["Plec"]).replace("True", "man").replace("False", "woman"),
         brith_date=datetime.fromisoformat(response.json()["data"]["DataUrodzenia"]).strftime("%d.%m.%Y"),
         brith_place=response.json()["data"]["MiejsceUrodzenia"],
         family_name=response.json()["data"]["NazwiskoRodowe"],
