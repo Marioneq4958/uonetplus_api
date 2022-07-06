@@ -24,9 +24,9 @@ class Settings(BaseSettings):
     raise Exception(f'{fg.red}Twoja wersja pythona to: {PYTHON_VER} a potrzebna jest 3.10.4 lub wyższa!!!{fg.rs}')
   TESTS_USERNAME: EmailStr = "jan@fakelog.cf"
   TESTS_PASSWORD: str = "jan123"
-  TESTS_HOST: str = "fakelog.gq"
+  TESTS_HOST: str = "fakelog.cf"
   TESTS_BACKUP_HOST: str = "fakelog.tk"
-  TESTS_SSL: bool = True
+  TESTS_SSL: bool = False
   TESTS_INVALID_PASSWORD: str = "marzenna123"
   TESTS_SEMESTER: str = "16"
   TESTS_DEVICE_ID: int = 1234
