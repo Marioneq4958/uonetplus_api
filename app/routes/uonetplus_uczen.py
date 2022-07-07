@@ -256,55 +256,9 @@ def get_blocks_info(data: models.UonetPlusUczen, request: Request):
     path2 = paths.UCZEN.UCZENDZIENNIK_GET
     response1 = get_response(data, path1, session_cookies)
     response2 = get_response(data, path2, session_cookies)
-    RokSzkolny, IdDziennik, Is13, IsArtystyczna, IsArtystyczna13, IsSpecjalny, IsPrzedszkola, IsArchiwalny, IsOplaty, IsPayButton, IsWychowankowie, IsPlatnosci, IsDorosli, IsPolicealna, IsAdult, IsStudentParent, IsAuthorized = search_block_json(response2, data)
-    block_inf = {
-        "Datazserwera": response1.json()["data"]["serverDate"],
-        "czyAutoryzowany": IsAuthorized,
-        "IdDziennika": IdDziennik,
-        "RokSzkolny": RokSzkolny,
-        "Blokady": {
-            "TypSzkoly":{
-                "Specjalna": IsSpecjalny,
-                "Przedszkole": IsPrzedszkola,
-                "Artystyczna": IsArtystyczna,
-                "Artystyczna13": IsArtystyczna13,
-                "Policealna": IsPolicealna,
-                "Poprawczak": IsWychowankowie
-            },
-            "TypUcznia":{
-                "czy18lat": IsAdult,
-                "czyRodzicUcznia": IsStudentParent,
-                "czyDorosly": IsDorosli,
-                "czyArchiwum": IsArchiwalny,
-                "czyRodzic": response1.json()["data"]["isParentUser"],
-                "czyDzieckoRodzica": response1.json()["data"]["isPupilUser"],
-                "Is13": Is13
-            },
-            "BlokadyFrontendu":{
-                "czyDostepdoJadlospis": response1.json()["data"]["isMenuOn"],
-                "czyDostepdoOplat": IsOplaty,
-                "czyDostepPlatnosci": IsPayButton,
-                "czyDostepdoLekcjiZrealizowanych": response1.json()["data"]["pokazLekcjeZrealizowane"],
-                "czyDostepdoLekcjiZaplanowanych": response1.json()["data"]["pokazLekcjeZaplanowane"], 
-                "czyDostepdoPodrecznikow": response1.json()["data"]["isPodrecznikiOn"],
-                "czyDostepOffice": response1.json()["data"]["isDostepOffice"],
-                "czyLogindoO365Ukryte": response1.json()["data"]["isO365LoginOff"],
-                "czyHaslodoO365Ukryte": response1.json()["data"]["isO365PassOff"], 
-                "czyPlatnosciWylaczone": response1.json()["data"]["isPayButtonOn"], 
-                "czyDostepdoPlatnosci": IsPlatnosci,
-                "czyDostepdoOplaty": IsOplaty,
-                "ZalacznikiOnedrive": response1.json()["data"]["isHomeworksOneDriveAttachmentsOn"],
-                "ZalacznikiGoogleDrive": response1.json()["data"]["isHomeworksGoogleDriveAttachmentsOn"]
-            }
-        }
-    }
-    return block_inf
-
-def search_block_json(response, data):
-    for i in response.json()["data"]:
-        if i["IdDziennik"] == data.IdDziennik:
-            #print(i['birthdate'])
-            #print(i['name'])
+    for i in response2.json()["data"]:
+        if i["IdDziennik"] == int(data.register_cookies["idBiezacyDziennik"]):
+            global RokSzkolny, IdDziennik, IsArtystyczna, IsArtystyczna13, IsSpecjalny, IsPrzedszkola, IsArchiwalny, IsOplaty, IsPayButton, IsWychowankowie, IsPlatnosci, IsDorosli, IsPolicealna, Is13, IsAuthorized, IsAdult, IsStudentParent
             RokSzkolny = i['DziennikRokSzkolny']
             IdDziennik = i["IdDziennik"]
             IsArtystyczna = i["IsArtystyczna"]
@@ -322,4 +276,47 @@ def search_block_json(response, data):
             IsAuthorized = i["IsAuthorized"]
             IsAdult = i["IsAdult"]
             IsStudentParent = i["IsStudentParent"]
-            return RokSzkolny, IdDziennik, Is13, IsArtystyczna, IsArtystyczna13, IsSpecjalny, IsPrzedszkola, IsArchiwalny, IsOplaty, IsPayButton, IsWychowankowie, IsPlatnosci, IsDorosli, IsPolicealna, IsAdult, IsStudentParent, IsAuthorized
+            break
+        else:
+            raise Exception("Nie znaleziono dziennika")
+    block_inf = {
+        "datefromtheserver": response1.json()["data"]["serverDate"],
+        "authorised": IsAuthorized,
+        "register_id": IdDziennik,
+        "schoolyear": RokSzkolny,
+        "Blockages": {
+            "TypeSchool":{
+                "Special": IsSpecjalny,
+                "Kindergarten": IsPrzedszkola,
+                "Artistic": IsArtystyczna,
+                "Artistic13": IsArtystyczna13,
+                "Post-secondary": IsPolicealna,
+                "Reformatory": IsWychowankowie
+            },
+            "TypeStudent":{
+                "Student18yearsold": IsAdult,
+                "StudentParent": IsStudentParent,
+                "StudentAdult": IsDorosli,
+                "StudentArchive": IsArchiwalny,
+                "Parent": response1.json()["data"]["isParentUser"],
+                "KidParent": response1.json()["data"]["isPupilUser"],
+                "Is13": Is13
+            },
+            "FrontendBlockages":{
+                "AccessMenu": response1.json()["data"]["isMenuOn"],
+                "AccessFees": IsOplaty,
+                "AccessPayment": IsPayButton,
+                "AccesstotheRealisedLessons": response1.json()["data"]["pokazLekcjeZrealizowane"],
+                "AccesstothePlannedLessons": response1.json()["data"]["pokazLekcjeZaplanowane"], 
+                "AccessBooks": response1.json()["data"]["isPodrecznikiOn"],
+                "AccessOffice": response1.json()["data"]["isDostepOffice"],
+                "LoginO365Hidden": response1.json()["data"]["isO365LoginOff"],
+                "PasswordO365Hidden": response1.json()["data"]["isO365PassOff"], 
+                "PaymentsOff": response1.json()["data"]["isPayButtonOn"], 
+                "AccesstothePayments": IsPlatnosci,
+                "AttachmentsOnedrive": response1.json()["data"]["isHomeworksOneDriveAttachmentsOn"],
+                "AttachmentsGoogleDrive": response1.json()["data"]["isHomeworksGoogleDriveAttachmentsOn"]
+            }
+        }
+    }
+    return block_inf
