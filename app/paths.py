@@ -20,6 +20,7 @@ class UZYTKOWNIK:
 class UCZEN:
     START: str = "/{SYMBOL}/{SCHOOLID}/Start"
     UCZENDZIENNIK_GET: str = "/{SYMBOL}/{SCHOOLID}/UczenDziennik.mvc/Get"
+    UCZENCACHE_GET: str = "/{SYMBOL}/{SCHOOLID}/UczenCache.mvc/Get"
     OCENY_GET: str = "/{SYMBOL}/{SCHOOLID}/Oceny.mvc/Get"
     STATYSTYKI_GETOCENYCZASTKOWE: str = (
         "/{SYMBOL}/{SCHOOLID}/Statystyki.mvc/GetOcenyCzastkowe"

@@ -5,17 +5,6 @@ import math
 
 router = APIRouter()
 
-
-def convert_size(size_bytes):
-    if size_bytes == 0:
-        return "0B"
-    size_name = ("B", "KB", "MB", "GB", "TB")
-    i = int(math.floor(math.log(size_bytes, 1024)))
-    p = math.pow(1024, i)
-    s = round(size_bytes / p, 2)
-    return "%s %s" % (s, size_name[i])
-
-
 class GithubFr:
     try:
         try:
@@ -43,10 +32,6 @@ class GithubFr:
         commit_date = repos.head.commit.committed_datetime.strftime("%d.%m.%Y %H:%M")
     except:
         commit_date = "ERROR - Cannot get commit date!"
-    try:    
-        commit_size = convert_size(repos.head.commit.size)
-    except:
-        commit_size = "ERROR - Cannot get commit size!"
     try:
         cc = repos.head.commit.message
         current_commit = cc.rstrip()
@@ -64,10 +49,6 @@ class GithubFr:
         repo_commit_number = repos.git.rev_list("--count", "develop")
     except:
         repo_commit_number = "ERROR - Cannot get repo commit number!"
-    try:
-        repo_size = repos.git.count_objects("-H")
-    except:
-        repo_size = "ERROR - Cannot get repo size!"
     try:
         current_branch = repos.active_branch.name
     except:
@@ -104,7 +85,6 @@ def get_branch_name(repozi: str = Depends(GithubFr)):
         "repo_name": GithubFr.repo_name[1:],
         "repo_link": GithubFr.repo_url,
         "repo_commit_number": GithubFr.repo_commit_number,
-        "repo_size": GithubFr.repo_size[13:],
         "branch_info": [
             {
                 "active_branch": GithubFr.current_branch,
@@ -118,7 +98,6 @@ def get_branch_name(repozi: str = Depends(GithubFr)):
                 "active_commit_hash_long": GithubFr.current_commit_hash,
                 "commit_author": GithubFr.commit_author,
                 "commit_date": GithubFr.commit_date,
-                "commit_size": GithubFr.commit_size,
             }
         ],
     }
@@ -152,10 +131,6 @@ class GithubBac:
         commit_date = repos.head.commit.committed_datetime.strftime("%d.%m.%Y %H:%M")
     except:
         commit_date = "ERROR - Cannot get commit date!"
-    try:    
-        commit_size = convert_size(repos.head.commit.size)
-    except:
-        commit_size = "ERROR - Cannot get commit size!"
     try:
         cc = repos.head.commit.message
         current_commit = cc.rstrip()
@@ -173,10 +148,6 @@ class GithubBac:
         repo_commit_number = repos.git.rev_list("--count", "develop")
     except:
         repo_commit_number = "ERROR - Cannot get repo commit number!"
-    try:
-        repo_size = repos.git.count_objects("-H")
-    except:
-        repo_size = "ERROR - Cannot get repo size!"
     try:
         #current_branch = repos.active_branch.name
         current_branch = current_commit_hash
@@ -203,7 +174,6 @@ def get_branch_name(repozi: str = Depends(GithubBac)):
         "repo_name": GithubBac.repo_name[1:],
         "repo_link": GithubBac.repo_url,
         "repo_commit_number": GithubBac.repo_commit_number,
-        "repo_size": GithubBac.repo_size[13:],
         "branch_info": [
             {
                 "active_branch": GithubBac.current_branch,
@@ -216,7 +186,6 @@ def get_branch_name(repozi: str = Depends(GithubBac)):
                 "active_commit_hash_long": GithubBac.current_commit_hash,
                 "commit_author": GithubBac.commit_author,
                 "commit_date": GithubBac.commit_date,
-                "commit_size": GithubBac.commit_size,
             }
         ],
     }

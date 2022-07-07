@@ -9,6 +9,71 @@ import ast
 
 router = APIRouter()
 
+def build_url(subd: str = None, host: str = None, path: str = None, ssl: bool = True, **kwargs) -> str:
+    if ssl:
+        url = "https://"
+    else:
+        url = "http://"
+    if subd:
+        url += subd + "."
+    url += host
+    if path:
+        url += path
+    if not kwargs.get("symbol"):
+        kwargs["symbol"] = "Default"
+
+    for k in kwargs:
+        url = url.replace(f"{{{k.upper()}}}", str(kwargs[k]))
+    return url
+
+def get_response(data: dict, path: str, session_cookies: dict) -> requests.models.Response:
+    session = requests.Session()
+    session_cookies.update(data.register_cookies)
+    url = build_url(
+        subd="uonetplus-uczen",
+        path=path,
+        symbol=data.symbol,
+        host=data.host,
+        schoolid=data.school_id,
+        ssl=data.ssl,
+    )
+    response = session.post(
+        url=url,
+        headers=data.headers,
+        json=data.payload,
+        cookies=session_cookies,
+    )
+    if response.status_code != 200:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=resources.UNKNOWN_ERROR)
+    if (
+        "uonet_error"
+        in response.text
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=resources.UNKNOWN_ERROR
+        )
+    return response
+
+def decrypt_session_data(request, session_data: str) -> dict:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=resources.AUTHENTICATION_REQUIRED
+    )
+    try:
+        if request.session.get('session_key'):
+            session_key = request.session.get('session_key')
+        else:
+            raise credentials_exception
+        fernet = Fernet(bytes(session_key, "utf-8"))
+        session_data = ast.literal_eval(fernet.decrypt(session_data.encode("utf-8")).decode("utf-8"))
+        if session_data['expire'] != None and session_data['session_cookies'] != None:
+            if datetime.timestamp(datetime.utcnow())*1000 > float(session_data['expire']):
+                raise credentials_exception
+        else:
+            raise credentials_exception
+        return dict(session_data['session_cookies'])
+    except:
+        raise credentials_exception
 
 @router.post("/notes", response_model=models.NotesAndAchievements)
 def get_notes(data: models.UonetPlusUczen, request: Request):
@@ -177,75 +242,81 @@ def delete_registered_device(data: models.UonetPlusUczen, request: Request):
     response = get_response(data, path, session_cookies)
     return response.json()
 
-def build_url(subd: str = None, host: str = None, path: str = None, ssl: bool = True, **kwargs) -> str:
-    if ssl:
-        url = "https://"
-    else:
-        url = "http://"
-    if subd:
-        url += subd + "."
-    url += host
-    if path:
-        url += path
-    if not kwargs.get("symbol"):
-        kwargs["symbol"] = "Default"
-
-    for k in kwargs:
-        url = url.replace(f"{{{k.upper()}}}", str(kwargs[k]))
-    return url
-
-def get_response(data: dict, path: str, session_cookies: dict) -> requests.models.Response:
-    session = requests.Session()
-    session_cookies.update(data.register_cookies)
-    url = build_url(
-        subd="uonetplus-uczen",
-        path=path,
-        symbol=data.symbol,
-        host=data.host,
-        schoolid=data.school_id,
-        ssl=data.ssl,
-    )
-    response = session.post(
-        url=url,
-        headers=data.headers,
-        json=data.payload,
-        cookies=session_cookies,
-    )
-    if response.status_code != 200:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=resources.UNKNOWN_ERROR)
-    if (
-        "uonet_error"
-        in response.text
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=resources.UNKNOWN_ERROR
-        )
-    return response
-
-def decrypt_session_data(request, session_data: str) -> dict:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail=resources.AUTHENTICATION_REQUIRED
-    )
-    try:
-        if request.session.get('session_key'):
-            session_key = request.session.get('session_key')
-        else:
-            raise credentials_exception
-        fernet = Fernet(bytes(session_key, "utf-8"))
-        session_data = ast.literal_eval(fernet.decrypt(session_data.encode("utf-8")).decode("utf-8"))
-        if session_data['expire'] != None and session_data['session_cookies'] != None:
-            if datetime.timestamp(datetime.utcnow())*1000 > float(session_data['expire']):
-                raise credentials_exception
-        else:
-            raise credentials_exception
-        return dict(session_data['session_cookies'])
-    except:
-        raise credentials_exception
-
 @router.post("/mobile-access/register-device-check")
 def register_device_check(data: models.UonetPlusUczen, request: Request):
     session_cookies = decrypt_session_data(request, data.session_data)
     path = paths.UCZEN.REJESTRACJAURZADZENIATOKENCERTYFIKAT_GET
     response = get_response(data, path, session_cookies)
     return response.json()
+
+@router.post("/get-block-info")
+def get_blocks_info(data: models.UonetPlusUczen, request: Request):
+    session_cookies = decrypt_session_data(request, data.session_data)
+    path1 = paths.UCZEN.UCZENCACHE_GET
+    path2 = paths.UCZEN.UCZENDZIENNIK_GET
+    response1 = get_response(data, path1, session_cookies)
+    response2 = get_response(data, path2, session_cookies)
+    for i in response2.json()["data"]:
+        if i["IdDziennik"] == int(data.register_cookies["idBiezacyDziennik"]):
+            global RokSzkolny, IdDziennik, IsArtystyczna, IsArtystyczna13, IsSpecjalny, IsPrzedszkola, IsArchiwalny, IsOplaty, IsPayButton, IsWychowankowie, IsPlatnosci, IsDorosli, IsPolicealna, Is13, IsAuthorized, IsAdult, IsStudentParent
+            RokSzkolny = i['DziennikRokSzkolny']
+            IdDziennik = i["IdDziennik"]
+            IsArtystyczna = i["IsArtystyczna"]
+            IsArtystyczna13 = i["IsArtystyczna13"]
+            IsSpecjalny = i["IsSpecjalny"]
+            IsPrzedszkola = i["IsPrzedszkola"]
+            IsArchiwalny = i["IsArchiwalny"]
+            IsOplaty = i["IsOplaty"]
+            IsPayButton = i["IsPayButtonOn"]
+            IsWychowankowie = i["IsWychowankowie"]
+            IsPlatnosci = i["IsPlatnosci"]
+            IsDorosli = i["IsDorosli"]
+            IsPolicealna = i["IsPolicealna"]
+            Is13 = i["Is13"]
+            IsAuthorized = i["IsAuthorized"]
+            IsAdult = i["IsAdult"]
+            IsStudentParent = i["IsStudentParent"]
+            break
+        else:
+            raise Exception("Nie znaleziono dziennika")
+    block_inf = {
+        "datefromtheserver": response1.json()["data"]["serverDate"],
+        "authorised": IsAuthorized,
+        "register_id": IdDziennik,
+        "schoolyear": RokSzkolny,
+        "Blockages": {
+            "TypeSchool":{
+                "Special": IsSpecjalny,
+                "Kindergarten": IsPrzedszkola,
+                "Artistic": IsArtystyczna,
+                "Artistic13": IsArtystyczna13,
+                "Post-secondary": IsPolicealna,
+                "Reformatory": IsWychowankowie
+            },
+            "TypeStudent":{
+                "Student18yearsold": IsAdult,
+                "StudentParent": IsStudentParent,
+                "StudentAdult": IsDorosli,
+                "StudentArchive": IsArchiwalny,
+                "Parent": response1.json()["data"]["isParentUser"],
+                "KidParent": response1.json()["data"]["isPupilUser"],
+                "Is13": Is13
+            },
+            "FrontendBlockages":{
+                "AccessMenu": response1.json()["data"]["isMenuOn"],
+                "AccessFees": IsOplaty,
+                "AccessPayment": IsPayButton,
+                "AccesstotheRealisedLessons": response1.json()["data"]["pokazLekcjeZrealizowane"],
+                "AccesstothePlannedLessons": response1.json()["data"]["pokazLekcjeZaplanowane"], 
+                "AccessBooks": response1.json()["data"]["isPodrecznikiOn"],
+                "AccessOffice": response1.json()["data"]["isDostepOffice"],
+                "LoginO365Hidden": response1.json()["data"]["isO365LoginOff"],
+                "PasswordO365Hidden": response1.json()["data"]["isO365PassOff"], 
+                "PaymentsOff": response1.json()["data"]["isPayButtonOn"], 
+                "AccesstothePayments": IsPlatnosci,
+                "AttachmentsOnedrive": response1.json()["data"]["isHomeworksOneDriveAttachmentsOn"],
+                "AttachmentsGoogleDrive": response1.json()["data"]["isHomeworksGoogleDriveAttachmentsOn"]
+            }
+        }
+    }
+    return block_inf

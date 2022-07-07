@@ -9,6 +9,7 @@ class fg:
 class Settings(BaseSettings):
   API_HOST: str = "127.0.0.1"
   API_PORT: int = 8000
+  API_DEBUG: bool = False
   API_V1_URL: str = "/api/v1"
   PYTHON_VER = platform.python_version()
   if PYTHON_VER == "3.10.4" or PYTHON_VER == "3.10.5":
