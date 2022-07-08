@@ -177,6 +177,22 @@ def delete_registered_device(data: models.UonetPlusUczen, request: Request):
     response = get_response(data, path, session_cookies)
     return response.json()
 
+@router.post("/textbooks/get-textbooks-school-years")
+def get_school_years(data: models.UonetPlusUczen, request: Request):
+    session_cookies = decrypt_session_data(request, data.session_data)
+    path = paths.UCZEN.PODRECZNIKILATASZKOLNE_GET
+    response = get_response(data, path, session_cookies)
+    school_years = []
+    for school_year in response.json()["data"]:
+        school_years.append(
+            models.TextbooksSchoolYear(
+                id=school_year["Id"],
+                name=school_year["Nazwa"]
+            )
+        )
+    return school_years
+
+
 def build_url(subd: str = None, host: str = None, path: str = None, ssl: bool = True, **kwargs) -> str:
     if ssl:
         url = "https://"
