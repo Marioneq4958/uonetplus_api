@@ -228,6 +228,65 @@ def get_student_textbooks(data: models.UonetPlusUczen, request: Request):
     return textbooks_data
 
 
+@router.post("/student-data")
+def get_student_data(data: models.UonetPlusUczen, request: Request):
+    session_cookies = decrypt_session_data(request, data.session_data)
+    path = paths.UCZEN.UCZEN_GET
+    response = get_response(data, path, session_cookies)
+    guardians = []
+    guardian1 = response.json()["data"]["Opiekun1"]
+    guardian2 = response.json()["data"]["Opiekun2"]
+    guardians.append(
+        models.GuardianData(
+            id=guardian1["Id"],
+            name=guardian1["Imie"],
+            surname=guardian1["Nazwisko"],
+            kinship=guardian1["StPokrewienstwa"],
+            address=guardian1["Adres"],
+            contact_data=models.GuardianContactData(
+                home_phone=guardian1["TelDomowy"],
+                cell_phone=guardian1["TelKomorkowy"],
+                work_phone=guardian1["TelSluzbowy"],
+                email_address=guardian1["Email"]
+            )
+        )
+    )
+    guardians.append(
+        models.GuardianData(
+            id=guardian2["Id"],
+            name=guardian2["Imie"],
+            surname=guardian2["Nazwisko"],
+            kinship=guardian2["StPokrewienstwa"],
+            address=guardian2["Adres"],
+            contact_data=models.GuardianContactData(
+                home_phone=guardian2["TelDomowy"],
+                cell_phone=guardian2["TelKomorkowy"],
+                work_phone=guardian2["TelSluzbowy"],
+                email_address=guardian2["Email"]
+            )
+        )
+    )
+    student_data = models.StudentData(
+        name=response.json()["data"]["Imie"],
+        second_name=response.json()["data"]["Imie2"],
+        surname=response.json()["data"]["Nazwisko"],
+        sex=str(response.json()["data"]["Plec"]).replace("True", "man").replace("False", "woman"),
+        brith_date=datetime.fromisoformat(response.json()["data"]["DataUrodzenia"]).strftime("%d.%m.%Y"),
+        brith_place=response.json()["data"]["MiejsceUrodzenia"],
+        family_name=response.json()["data"]["NazwiskoRodowe"],
+        polish_citizenship=response.json()["data"]["ObywatelstwoPolskie"],
+        is_pole=response.json()["data"]["Polak"],
+        address_data=models.StudentAddressData(
+            address=response.json()["data"]["AdresZamieszkania"],
+            registered_address=response.json()["data"]["AdresZameldowania"],
+            correspondence_address=response.json()["data"]["AdresKorespondencji"]
+        ),
+        guardians=guardians,
+        hide_address_data=response.json()["data"]["UkryteDaneAdresowe"],
+        has_pesel=response.json()["data"]["PosiadaPesel"],
+    )
+    return student_data
+
 def build_url(subd: str = None, host: str = None, path: str = None, ssl: bool = True, **kwargs) -> str:
     if ssl:
         url = "https://"
