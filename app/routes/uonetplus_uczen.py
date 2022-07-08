@@ -170,6 +170,7 @@ def get_register_device_token(data: models.UonetPlusUczen, request: Request):
     )
     return token_response
 
+
 @router.post("/mobile-access/delete-registered-device")
 def delete_registered_device(data: models.UonetPlusUczen, request: Request):
     session_cookies = decrypt_session_data(request, data.session_data)
@@ -177,8 +178,17 @@ def delete_registered_device(data: models.UonetPlusUczen, request: Request):
     response = get_response(data, path, session_cookies)
     return response.json()
 
-@router.post("/textbooks/get-textbooks-school-years")
-def get_school_years(data: models.UonetPlusUczen, request: Request):
+
+@router.post("/mobile-access/register-device-check")
+def register_device_check(data: models.UonetPlusUczen, request: Request):
+    session_cookies = decrypt_session_data(request, data.session_data)
+    path = paths.UCZEN.REJESTRACJAURZADZENIATOKENCERTYFIKAT_GET
+    response = get_response(data, path, session_cookies)
+    return response.json()
+
+
+@router.post("/textbooks/get-textbooks-school-years", response_model=list[models.TextbooksSchoolYear])
+def get_textbooks_school_years(data: models.UonetPlusUczen, request: Request):
     session_cookies = decrypt_session_data(request, data.session_data)
     path = paths.UCZEN.PODRECZNIKILATASZKOLNE_GET
     response = get_response(data, path, session_cookies)
@@ -258,10 +268,3 @@ def decrypt_session_data(request, session_data: str) -> dict:
         return dict(session_data['session_cookies'])
     except:
         raise credentials_exception
-
-@router.post("/mobile-access/register-device-check")
-def register_device_check(data: models.UonetPlusUczen, request: Request):
-    session_cookies = decrypt_session_data(request, data.session_data)
-    path = paths.UCZEN.REJESTRACJAURZADZENIATOKENCERTYFIKAT_GET
-    response = get_response(data, path, session_cookies)
-    return response.json()
