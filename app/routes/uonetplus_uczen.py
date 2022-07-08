@@ -301,3 +301,10 @@ def decrypt_session_data(request, session_data: str) -> dict:
         return dict(session_data['session_cookies'])
     except:
         raise credentials_exception
+
+@router.post("/mobile-access/register-device-check")
+def register_device_check(data: models.UonetPlusUczen, request: Request):
+    session_cookies = decrypt_session_data(request, data.session_data)
+    path = paths.UCZEN.REJESTRACJAURZADZENIATOKENCERTYFIKAT_GET
+    response = get_response(data, path, session_cookies)
+    return response.json()

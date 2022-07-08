@@ -37,3 +37,6 @@ class UCZEN:
         "/{SYMBOL}/{SCHOOLID}/RejestracjaUrzadzeniaToken.mvc/Get"
     )
     UCZEN_GET: str = "/{SYMBOL}/{SCHOOLID}/Uczen.mvc/Get"
+    REJESTRACJAURZADZENIATOKENCERTYFIKAT_GET: str = (
+        "/{SYMBOL}/{SCHOOLID}/RejestracjaUrzadzeniaTokenCertyfikat.mvc/Get"
+    )
