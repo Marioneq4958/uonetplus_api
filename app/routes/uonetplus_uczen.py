@@ -170,12 +170,63 @@ def get_register_device_token(data: models.UonetPlusUczen, request: Request):
     )
     return token_response
 
+
 @router.post("/mobile-access/delete-registered-device")
 def delete_registered_device(data: models.UonetPlusUczen, request: Request):
     session_cookies = decrypt_session_data(request, data.session_data)
     path = paths.UCZEN.ZAREJESTROWANEURZADZENIA_DELETE
     response = get_response(data, path, session_cookies)
     return response.json()
+
+
+@router.post("/mobile-access/register-device-check")
+def register_device_check(data: models.UonetPlusUczen, request: Request):
+    session_cookies = decrypt_session_data(request, data.session_data)
+    path = paths.UCZEN.REJESTRACJAURZADZENIATOKENCERTYFIKAT_GET
+    response = get_response(data, path, session_cookies)
+    return response.json()
+
+
+@router.post("/textbooks/get-textbooks-school-years", response_model=list[models.TextbooksSchoolYear])
+def get_textbooks_school_years(data: models.UonetPlusUczen, request: Request):
+    session_cookies = decrypt_session_data(request, data.session_data)
+    path = paths.UCZEN.PODRECZNIKILATASZKOLNE_GET
+    response = get_response(data, path, session_cookies)
+    school_years = []
+    for school_year in response.json()["data"]:
+        school_years.append(
+            models.TextbooksSchoolYear(
+                id=school_year["Id"],
+                name=school_year["Nazwa"]
+            )
+        )
+    return school_years
+
+
+@router.post("/textbooks/get-student-textbooks", response_model=models.TextbooksData)
+def get_student_textbooks(data: models.UonetPlusUczen, request: Request):
+    session_cookies = decrypt_session_data(request, data.session_data)
+    path = paths.UCZEN.PODRECZNIKIUCZNIA_GET
+    response = get_response(data, path, session_cookies)
+    textbooks = []
+    for textbook in response.json()["data"]["Podreczniki"]:
+        textbooks.append(
+            models.Textbook(
+                id=textbook["Id"],
+                is_active=textbook["Aktywny"],
+                subject=textbook["Przedmiot"],
+                title=textbook["Tytul"],
+                description=textbook["Opis"],
+                author=textbook["Autor"],
+                publisher=textbook["Wydawnictwo"]
+            )
+        )
+    textbooks_data = models.TextbooksData(
+        is_approved=response.json()["data"]["IsZatwierdzone"],
+        textbooks=textbooks
+    )
+    return textbooks_data
+
 
 @router.post("/student-data")
 def get_student_data(data: models.UonetPlusUczen, request: Request):
@@ -301,10 +352,3 @@ def decrypt_session_data(request, session_data: str) -> dict:
         return dict(session_data['session_cookies'])
     except:
         raise credentials_exception
-
-@router.post("/mobile-access/register-device-check")
-def register_device_check(data: models.UonetPlusUczen, request: Request):
-    session_cookies = decrypt_session_data(request, data.session_data)
-    path = paths.UCZEN.REJESTRACJAURZADZENIATOKENCERTYFIKAT_GET
-    response = get_response(data, path, session_cookies)
-    return response.json()
