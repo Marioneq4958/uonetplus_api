@@ -12,6 +12,7 @@ from tests.routes import (
     mobile_access_register,
     mobile_access_delete_registed,
     mobile_access_registed,
+    textbooks,
     github,
 )
 from tests.checks import status_code
@@ -98,7 +99,27 @@ def test_mobile_access_register():
 
 def test_mobile_access_delete_registed():
     mobile_access_delete_registed.mobile_access_delete_registed_test(
-        session_data, headers, register_cookies, school_id, host, symbol, settings.TESTS_SSL, settings.TESTS_DEVICE_ID, fg
+        session_data, headers, register_cookies, school_id, host, symbol, settings.TESTS_SSL, settings.TESTS_DEVICE_ID,
+        fg
+    )
+
+
+def test_textbooks_school_years():
+    mobile_access_delete_registed.mobile_access_delete_registed_test(
+        session_data, headers, register_cookies, school_id, host, symbol, settings.TESTS_SSL, settings.TESTS_DEVICE_ID,
+        fg
+    )
+
+
+def test_textbooks_school_years():
+    textbooks.textbooks_school_years_test(
+        session_data, headers, register_cookies, school_id, host, symbol, settings.TESTS_SSL, fg
+    )
+
+
+def test_student_textbooks():
+    textbooks.student_textbooks_test(
+        session_data, headers, register_cookies, school_id, host, symbol, settings.TESTS_SSL, fg
     )
 
 
@@ -108,4 +129,3 @@ def test_github_backend_info():
 
 def test_github_frontend_info():
     github.github_info_frontend_test(fg)
-

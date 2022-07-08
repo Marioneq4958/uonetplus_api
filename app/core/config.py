@@ -11,21 +11,12 @@ class Settings(BaseSettings):
   API_PORT: int = 8000
   API_V1_URL: str = "/api/v1"
   PYTHON_VER = platform.python_version()
-  if PYTHON_VER == "3.10.4" or PYTHON_VER == "3.10.5":
-    try:
-      x = os.environ["W_BACKEND_CORS"]
-      print(f'{fg.orange}Wykryto zmienną W_BACKEND_CORS!{fg.rs}')
-      CORS_ORIGINS: str = x
-    except:
-      print(f'{fg.lightgreen}Nie wykryto zmiennej W_BACKEND_CORS. Używanie ustawień domyślnych!{fg.rs}')
-      CORS_ORIGINS: list = [ "http://localhost:8080" ]
-  else:
-    raise Exception(f'{fg.red}Twoja wersja pythona to: {PYTHON_VER} a potrzebna jest 3.10.4 lub wyższa!!!{fg.rs}')
+  CORS_ORIGINS: list = ["http://localhost:8080"]
   TESTS_USERNAME: EmailStr = "jan@fakelog.cf"
   TESTS_PASSWORD: str = "jan123"
-  TESTS_HOST: str = "fakelog.cf"
+  TESTS_HOST: str = "fakelog.gq"
   TESTS_BACKUP_HOST: str = "fakelog.tk"
-  TESTS_SSL: bool = False
+  TESTS_SSL: bool = True
   TESTS_INVALID_PASSWORD: str = "marzenna123"
   TESTS_SEMESTER: str = "16"
   TESTS_DEVICE_ID: int = 1234

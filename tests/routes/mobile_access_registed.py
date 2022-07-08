@@ -21,7 +21,7 @@ def mobile_access_registed_test(
     )
     status_check(response.status_code, response.json(), fg)
     assert (
-        response.json()[0]["name"]
-        == "To Be Filled By O.E.M.#To Be Filled By O.E.M. (Windows 8.1)"
+            response.json()[0]["name"]
+            == "Szkolny.eu - nie usuwać"
     )
-    assert response.json()[1]["id"] == 1234
+    assert response.json()[1]["id"] == -2137
