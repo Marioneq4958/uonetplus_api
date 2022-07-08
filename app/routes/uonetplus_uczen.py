@@ -203,6 +203,31 @@ def get_textbooks_school_years(data: models.UonetPlusUczen, request: Request):
     return school_years
 
 
+@router.post("/textbooks/get-student-textbooks", response_model=models.TextbooksData)
+def get_student_textbooks(data: models.UonetPlusUczen, request: Request):
+    session_cookies = decrypt_session_data(request, data.session_data)
+    path = paths.UCZEN.PODRECZNIKIUCZNIA_GET
+    response = get_response(data, path, session_cookies)
+    textbooks = []
+    for textbook in response.json()["data"]["Podreczniki"]:
+        textbooks.append(
+            models.Textbook(
+                id=textbook["Id"],
+                is_active=textbook["Aktywny"],
+                subject=textbook["Przedmiot"],
+                title=textbook["Tytul"],
+                description=textbook["Opis"],
+                author=textbook["Autor"],
+                publisher=textbook["Wydawnictwo"]
+            )
+        )
+    textbooks_data = models.TextbooksData(
+        is_approved=response.json()["data"]["IsZatwierdzone"],
+        textbooks=textbooks
+    )
+    return textbooks_data
+
+
 def build_url(subd: str = None, host: str = None, path: str = None, ssl: bool = True, **kwargs) -> str:
     if ssl:
         url = "https://"
