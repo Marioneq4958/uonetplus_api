@@ -1,3 +1,4 @@
+from turtle import circle
 from fastapi import APIRouter, HTTPException
 from starlette import status
 from starlette.requests import Request
@@ -249,6 +250,121 @@ def register_device_check(data: models.UonetPlusUczen, request: Request):
     response = get_response(data, path, session_cookies)
     return response.json()
 
+class Test:
+    def __init__(self, IsAuthorized, IsPrzedszkola, IsStudentParent, IsWychowankowie):
+        self.IsAuthorized = IsAuthorized
+        self.IsPrzedszkola = IsPrzedszkola
+        self.IsStudentParent = IsStudentParent
+        self.IsWychowankowie = IsWychowankowie 
+        self.Test()
+
+
+    def Test(self):
+        global Oceny, Frekwencja, EwidencjaObecności, PlanLekcji, Sprawdzany, EgzaminySemestralne, EgzaminyZewnetrzne, ZadaniaDomowe, Uwagi, Zebrania, Jadłospis, Ogłoszenia, Podręczniki, SzkołaiNauczyciele, InfoUczen, DostępMobilny, Formularze, DostępOffice, Wiadomości
+        if self.IsAuthorized == False:
+            Oceny = False
+            Frekwencja = False
+            EwidencjaObecności = False
+            PlanLekcji = False
+            Sprawdzany = False
+            EgzaminyZewnetrzne = False
+            EgzaminySemestralne = False
+            ZadaniaDomowe = False
+            Uwagi = False
+            Zebrania = False
+            Jadłospis = False
+            Ogłoszenia = False
+            Podręczniki = False
+            SzkołaiNauczyciele = False
+            InfoUczen = False
+            DostępMobilny = False
+            Formularze = False
+            DostępOffice = False 
+            Wiadomości = False
+        else:
+            if self.IsPrzedszkola == True and not self.IsStudentParent == False:
+                    Oceny = False
+                    Frekwencja = False
+                    EwidencjaObecności = True
+                    PlanLekcji = False
+                    Sprawdzany = False
+                    EgzaminyZewnetrzne = False
+                    EgzaminySemestralne = False
+                    ZadaniaDomowe = False
+                    Uwagi = False
+                    Zebrania = False
+                    Jadłospis = False
+                    Ogłoszenia = False
+                    Podręczniki = False
+                    SzkołaiNauczyciele = False
+                    InfoUczen = True
+                    DostępMobilny = True
+                    Formularze = False
+                    DostępOffice = False 
+                    Wiadomości = True
+            else:
+                if self.IsWychowankowie == True and not self.IsStudentParent == False:
+                        Oceny = False
+                        Frekwencja = False
+                        EwidencjaObecności = True
+                        PlanLekcji = False
+                        Sprawdzany = False
+                        EgzaminyZewnetrzne = False
+                        EgzaminySemestralne = False
+                        ZadaniaDomowe = False
+                        Uwagi = False
+                        Zebrania = True
+                        Jadłospis = True
+                        Ogłoszenia = False
+                        Podręczniki = False
+                        SzkołaiNauczyciele = True
+                        InfoUczen = True
+                        DostępMobilny = False
+                        Formularze = False
+                        DostępOffice = False 
+                        Wiadomości = True
+                else:
+                    if self.IsWychowankowie == True and not self.IsStudentParent == True:
+                            Oceny = False
+                            Frekwencja = False
+                            EwidencjaObecności = True
+                            PlanLekcji = False
+                            Sprawdzany = False
+                            EgzaminyZewnetrzne = False
+                            EgzaminySemestralne = False
+                            ZadaniaDomowe = False
+                            Uwagi = False
+                            Zebrania = False
+                            Jadłospis = True
+                            Ogłoszenia = False
+                            Podręczniki = False
+                            SzkołaiNauczyciele = True
+                            InfoUczen = True
+                            DostępMobilny = False
+                            Formularze = False
+                            DostępOffice = False 
+                            Wiadomości = True
+                    else:
+                        if not self.IsWychowankowie == True and not self.IsStudentParent == True and not self.IsPrzedszkola == True and not self.IsAuthorized:
+                                Oceny = True
+                                Frekwencja = True
+                                EwidencjaObecności = True
+                                PlanLekcji = True
+                                Sprawdzany = True
+                                EgzaminyZewnetrzne = True
+                                EgzaminySemestralne = False
+                                ZadaniaDomowe = True
+                                Uwagi = True
+                                Zebrania = True
+                                Jadłospis = False
+                                Ogłoszenia = True
+                                Podręczniki = True
+                                SzkołaiNauczyciele = True
+                                InfoUczen = True
+                                DostępMobilny = True
+                                Formularze = True
+                                DostępOffice = False 
+                                Wiadomości = True
 @router.post("/get-block-info")
 def get_blocks_info(data: models.UonetPlusUczen, request: Request):
     session_cookies = decrypt_session_data(request, data.session_data)
@@ -279,6 +395,7 @@ def get_blocks_info(data: models.UonetPlusUczen, request: Request):
             break
         else:
             raise Exception("Nie znaleziono dziennika")
+    Test(IsAuthorized, IsPrzedszkola, IsStudentParent, IsWychowankowie)
     block_inf = {
         "datefromtheserver": response1.json()["data"]["serverDate"],
         "authorised": IsAuthorized,
@@ -316,6 +433,28 @@ def get_blocks_info(data: models.UonetPlusUczen, request: Request):
                 "AccesstothePayments": IsPlatnosci,
                 "AttachmentsOnedrive": response1.json()["data"]["isHomeworksOneDriveAttachmentsOn"],
                 "AttachmentsGoogleDrive": response1.json()["data"]["isHomeworksGoogleDriveAttachmentsOn"]
+            },
+            "BlockadesList":{
+                "Oceny": Oceny,
+                "Frekwencja": Frekwencja,
+                "EwidencjaObecnosci": EwidencjaObecności,
+                "PlanLekcji": PlanLekcji,
+                "Sprawdzany": Sprawdzany,
+                "EgzaminyZewnetrzne": EgzaminyZewnetrzne,
+                "EgzaminySemestralne": EgzaminySemestralne,
+                "ZadaniaDomowe": ZadaniaDomowe,
+                "Uwagi": Uwagi,
+                "Zebrania": Zebrania,
+                "Jadlospis": Jadłospis,
+                "Ogłoszenia": Ogłoszenia,
+                "Podreczniki": Podręczniki,
+                "SzkołaINauczyciele": SzkołaiNauczyciele,
+                "DaneUcznia": InfoUczen,
+                "DostepMobilny": DostępMobilny,
+                "Formularze": Formularze,
+                "DostepOffice": DostępOffice,
+                "Wiadomosci": Wiadomości,
+
             }
         }
     }
