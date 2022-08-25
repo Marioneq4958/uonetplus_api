@@ -10,13 +10,7 @@ class UONETPLUS:
         "/{SYMBOL}/Start.mvc/GetStudentDirectorInformations"
     )
 
-
-class UZYTKOWNIK:
-    NOWAWIADOMOSC_GETJEDNOSTKIUZYTKOWNIKA: str = (
-        "/{SYMBOL}/NowaWiadomosc.mvc/GetJednostkiUzytkownika"
-    )
-
-
+        
 class UCZEN:
     START: str = "/{SYMBOL}/{SCHOOLID}/Start"
     UCZENDZIENNIK_GET: str = "/{SYMBOL}/{SCHOOLID}/UczenDziennik.mvc/Get"
